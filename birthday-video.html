@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday ✨ 3D Rotating Memories</title>
+    
+    <!-- Local & Google Fonts: Harry Potter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@400;500;600;700&family=Dancing+Script:wght@600;700&family=Caveat:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/harry-potter" rel="stylesheet">
+
+    <style>
+        @font-face {
+            font-family: 'Harry Potter Local';
+            src: url('public/fonts/harry_p.woff') format('woff'),
+                 url('assets/fonts/harry_p.woff') format('woff'),
+                 url('https://fonts.cdnfonts.com/s/25438/HARRP___.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --gold-primary: #FFE81F;
+            --gold-bright: #FFF566;
+            --gold-shadow: #8b6b00;
+            --gold-glow: rgba(255, 232, 31, 0.9);
+            --bg-dark: #08060e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Ambient glowing background */
+        .ambient-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(58, 25, 80, 0.45) 0%, transparent 68%),
+                radial-gradient(circle at 15% 85%, rgba(18, 9, 32, 0.75) 0%, transparent 55%),
+                radial-gradient(circle at 85% 15%, rgba(70, 45, 15, 0.35) 0%, transparent 50%),
+                #07050c;
+            z-index: 1;
+        }
+
+        /* Canvas for floating sparkles/dust */
+        #sparkleCanvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Top control bar */
+        .top-nav {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20, 15, 32, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 232, 31, 0.25);
+            border-radius: 40px;
+            padding: 8px 18px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.6), 0 0 25px rgba(255,232,31,0.15);
+            max-width: 95vw;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #f3e8ff;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 232, 31, 0.15);
+            color: var(--gold-bright);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #ffd700, #ff9900);
+            color: #120e03;
+            font-weight: 700;
+            box-shadow: 0 4px 18px rgba(255, 215, 0, 0.4);
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 24px rgba(255, 215, 0, 0.6);
+        }
+
+        .nav-btn.recording {
+            background: #ef4444 !important;
+            color: #fff !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            animation: pulseRecord 1.2s infinite;
+        }
+
+        /* Celebration Button in Top Nav */
+        .nav-btn.celebration-btn {
+            background: linear-gradient(135deg, rgba(255, 232, 31, 0.22), rgba(255, 183, 3, 0.32));
+            border: 1px solid rgba(255, 232, 31, 0.65);
+            color: var(--gold-bright) !important;
+            font-weight: 600;
+            box-shadow: 0 0 16px rgba(255, 232, 31, 0.25);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: celebrationPillGlow 2.5s infinite alternate;
+        }
+
+        .nav-btn.celebration-btn:hover {
+            background: linear-gradient(135deg, #ffd700, #ff9900);
+            color: #120e03 !important;
+            transform: translateY(-2px) scale(1.06);
+            box-shadow: 0 6px 24px rgba(255, 215, 0, 0.65);
+        }
+
+        @keyframes celebrationPillGlow {
+            0% { transform: scale(1); box-shadow: 0 0 12px rgba(255, 232, 31, 0.2); }
+            100% { transform: scale(1.03); box-shadow: 0 0 22px rgba(255, 232, 31, 0.5); }
+        }
+
+        /* Fullscreen Pinterest Scrapbook Celebration Overlay */
+        .celebration-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            align-items: center;
+            justify-content: center;
+            padding: 24px 18px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: 
+                radial-gradient(ellipse 65% 55% at 50% 18%, rgba(225, 29, 72, 0.38) 0%, transparent 68%),
+                radial-gradient(ellipse 55% 45% at 15% 80%, rgba(244, 63, 94, 0.32) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 85% 70%, rgba(251, 191, 36, 0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 60% at 50% 95%, rgba(159, 18, 57, 0.5) 0%, transparent 75%),
+                rgba(18, 10, 24, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .celebration-overlay.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #fireworksCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+            z-index: 1;
+        }
+
+        /* Floating Background Stickers */
+        .cel-deco {
+            position: absolute;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.75;
+            animation: celFloatDeco 6s ease-in-out infinite alternate;
+        }
+        .cel-deco-bow-1    { top: 10%; left: 8%;  font-size: 28px; color: #fda4af; animation-delay: 0s; }
+        .cel-deco-star-1   { top: 20%; right: 9%; font-size: 22px; color: #ffd700; animation-delay: 1.5s; }
+        .cel-deco-heart-1  { bottom: 16%; left: 10%; font-size: 24px; color: #f43f5e; animation-delay: 2.2s; }
+        .cel-deco-cherry-1 { top: 68%; right: 8%; font-size: 26px; animation-delay: 0.8s; }
+        .cel-deco-flower-1 { top: 8%; right: 24%; font-size: 24px; color: #fda4af; animation-delay: 3s; }
+        .cel-deco-sparkle-1{ bottom: 12%; right: 22%; font-size: 22px; color: #ffd700; animation-delay: 1.8s; }
+        .cel-deco-bow-2    { bottom: 8%; left: 24%; font-size: 26px; color: #fda4af; animation-delay: 2.5s; }
+        .cel-deco-star-2   { top: 38%; left: 5%; font-size: 20px; color: #ffd700; animation-delay: 0.5s; }
+        .cel-deco-heart-2  { top: 14%; right: 36%; font-size: 20px; color: #e11d48; animation-delay: 1.2s; }
+
+        @keyframes celFloatDeco {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(6deg); }
+        }
+
+        /* Center Pinterest Scrapbook Keepsake Plaque */
+        .celebration-card {
+            position: relative;
+            z-index: 10;
+            max-width: 530px;
+            width: 100%;
+            background: radial-gradient(ellipse at 50% 12%, #ffffff 0%, #fff7f9 35%, #ffebf0 70%, #fedce5 100%);
+            border: 2px solid rgba(225, 29, 72, 0.22);
+            border-radius: 32px;
+            padding: 42px 30px 28px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 
+                0 28px 75px rgba(0, 0, 0, 0.7), 
+                0 0 45px rgba(225, 29, 72, 0.28),
+                inset 0 1px 2px rgba(255, 255, 255, 0.95);
+            transform: scale(0.92);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .celebration-overlay.active .celebration-card {
+            transform: scale(1);
+        }
+
+        /* Cute Washi Tapes on Top Corners */
+        .cel-washi {
+            position: absolute;
+            width: 90px;
+            height: 24px;
+            top: -10px;
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .cel-washi-left {
+            left: 36px;
+            background: rgba(254, 205, 211, 0.85);
+            transform: rotate(-3.5deg);
+            border-left: 2px dashed rgba(225, 29, 72, 0.35);
+            border-right: 2px dashed rgba(225, 29, 72, 0.35);
+        }
+
+        .cel-washi-right {
+            right: 36px;
+            background: rgba(255, 228, 230, 0.9);
+            transform: rotate(3.5deg);
+            border-left: 2px dashed rgba(225, 29, 72, 0.35);
+            border-right: 2px dashed rgba(225, 29, 72, 0.35);
+        }
+
+        /* Coquette Ribbon Badge */
+        .cel-ribbon-badge {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #be123c;
+            background: rgba(254, 205, 211, 0.45);
+            border: 1px solid rgba(225, 29, 72, 0.28);
+            border-radius: 20px;
+            padding: 4px 15px;
+            margin-bottom: 10px;
+        }
+
+        /* Close / Return Button */
+        .celebration-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: #ffffff;
+            border: 1.5px solid rgba(225, 29, 72, 0.28);
+            color: #9f1239;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(225, 29, 72, 0.15);
+            transition: all 0.25s ease;
+            z-index: 20;
+        }
+
+        .celebration-close-btn:hover {
+            background: #e11d48;
+            color: #ffffff;
+            border-color: #e11d48;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+        }
+
+        /* Eyebrow Tag */
+        .celebration-eyebrow {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #e11d48;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* Title in Editorial Serif */
+        .celebration-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(32px, 5.5vw, 46px);
+            font-weight: 700;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #9f1239 0%, #e11d48 50%, #be123c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Subtitle Name */
+        .celebration-name {
+            font-family: 'Dancing Script', 'Caveat', cursive;
+            font-size: clamp(28px, 4.5vw, 38px);
+            font-weight: 700;
+            color: #be123c;
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .celebration-name .heart-beat {
+            color: #e11d48;
+            display: inline-block;
+            animation: celHeartBeat 1.4s infinite ease-in-out;
+        }
+
+        @keyframes celHeartBeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+        }
+
+        /* Metallic 21 Balloons Scrapbook Charm */
+        .celebration-balloons-stage {
+            position: relative;
+            margin: 4px 0 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .balloons-glow-aura {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(254, 205, 211, 0.75) 0%, rgba(254, 226, 226, 0.3) 55%, transparent 75%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: blur(10px);
+        }
+
+        .celebration-balloons-img {
+            position: relative;
+            z-index: 2;
+            width: 115px;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(225, 29, 72, 0.32));
+            animation: celBalloonDrift 3.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes celBalloonDrift {
+            0% { transform: translateY(0px) rotate(-1.5deg); }
+            100% { transform: translateY(-8px) rotate(1.5deg); }
+        }
+
+        .balloons-tag {
+            font-family: 'Caveat', cursive;
+            font-size: 19px;
+            font-weight: 700;
+            color: #9f1239;
+            margin-top: -2px;
+            position: relative;
+            z-index: 3;
+        }
+
+        /* Heartfelt Wish Message */
+        .celebration-wish-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: #4a1525;
+            max-width: 460px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        /* Decorative Scrapbook Divider */
+        .celebration-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e11d48;
+            font-size: 13px;
+            margin-bottom: 18px;
+            opacity: 0.85;
+        }
+
+        /* Interactive Action Buttons Row */
+        .celebration-actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .celebration-btn-action {
+            background: #ffffff;
+            border: 1.5px solid rgba(225, 29, 72, 0.25);
+            color: #9f1239;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.08);
+            transition: all 0.25s ease;
+        }
+
+        .celebration-btn-action:hover {
+            background: #fff0f3;
+            border-color: #e11d48;
+            color: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(225, 29, 72, 0.18);
+        }
+
+        .celebration-btn-action.primary {
+            background: linear-gradient(135deg, #e11d48 0%, #f43f5e 50%, #fb7185 100%);
+            border: none;
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: 0 6px 22px rgba(225, 29, 72, 0.45);
+            animation: celLaunchPulse 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes celLaunchPulse {
+            0% { transform: scale(1); box-shadow: 0 4px 18px rgba(225, 29, 72, 0.4); }
+            100% { transform: scale(1.04); box-shadow: 0 8px 28px rgba(225, 29, 72, 0.65); }
+        }
+
+        .celebration-btn-action.primary:hover {
+            transform: translateY(-2px) scale(1.06);
+            box-shadow: 0 8px 28px rgba(225, 29, 72, 0.7);
+        }
+
+        /* Cute Tap Hint */
+        .celebration-tap-hint {
+            font-family: 'Caveat', cursive;
+            font-size: 16px;
+            color: #be123c;
+            margin-top: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 600px) {
+            .celebration-card {
+                padding: 34px 18px 22px;
+                border-radius: 26px;
+            }
+            .cel-washi-left { left: 16px; width: 70px; }
+            .cel-washi-right { right: 16px; width: 70px; }
+            .celebration-title { font-size: 32px; }
+            .celebration-name { font-size: 28px; }
+            .celebration-wish-text { font-size: 13.5px; }
+            .celebration-btn-action { padding: 8px 16px; font-size: 12.5px; }
+        }
+
+        @keyframes pulseRecord {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.05); }
+        }
+
+        /* 3D Scene Viewport */
+        .stage-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1100px;
+            perspective-origin: 50% 50%;
+            z-index: 10;
+        }
+
+        /* 3D Rotating Carousel Cylinder */
+        .cylinder-carousel {
+            position: absolute;
+            width: 230px;
+            height: 320px;
+            transform-style: preserve-3d;
+            animation: spinCylinder 26s linear infinite;
+            will-change: transform;
+            cursor: grab;
+            z-index: 15;
+        }
+
+        .cylinder-carousel:active {
+            cursor: grabbing;
+        }
+
+        .cylinder-carousel.paused {
+            animation-play-state: paused;
+        }
+
+        @keyframes spinCylinder {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(-360deg);
+            }
+        }
+
+        /* Black & white background photo panels */
+        .carousel-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 230px;
+            height: 320px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: #111;
+            backface-visibility: visible;
+            transform-origin: center center;
+            transition: border-color 0.3s;
+        }
+
+        .carousel-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.15) brightness(0.8);
+            display: block;
+        }
+
+        .carousel-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.55) 100%),
+                        linear-gradient(to top, rgba(0,0,0,0.4), transparent 45%);
+            pointer-events: none;
+        }
+
+        /* 9 Panels positioned in 360-degree cylinder (Radius = 430px) */
+        .panel-1 { transform: rotateY(0deg) translateZ(430px); }
+        .panel-2 { transform: rotateY(40deg) translateZ(430px); }
+        .panel-3 { transform: rotateY(80deg) translateZ(430px); }
+        .panel-4 { transform: rotateY(120deg) translateZ(430px); }
+        .panel-5 { transform: rotateY(160deg) translateZ(430px); }
+        .panel-6 { transform: rotateY(200deg) translateZ(430px); }
+        .panel-7 { transform: rotateY(240deg) translateZ(430px); }
+        .panel-8 { transform: rotateY(280deg) translateZ(430px); }
+        .panel-9 { transform: rotateY(320deg) translateZ(430px); }
+
+        /* Ambient Pinterest Vintage Film Light Leak & Prism Flare */
+        .vintage-prism-leak {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background: 
+                radial-gradient(ellipse 65% 55% at 88% 12%, rgba(255, 140, 105, 0.16) 0%, rgba(255, 182, 193, 0.12) 35%, transparent 68%),
+                radial-gradient(ellipse 60% 50% at 12% 88%, rgba(186, 104, 200, 0.13) 0%, rgba(255, 215, 0, 0.08) 40%, transparent 65%),
+                radial-gradient(circle at 50% 10%, rgba(255, 240, 245, 0.07) 0%, transparent 50%);
+            mix-blend-mode: screen;
+            animation: filmLeakPulse 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes filmLeakPulse {
+            0% {
+                opacity: 0.72;
+                filter: hue-rotate(0deg) brightness(1);
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.96;
+                filter: hue-rotate(18deg) brightness(1.12);
+                transform: scale(1.03) translate(12px, -6px);
+            }
+            100% {
+                opacity: 0.68;
+                filter: hue-rotate(-12deg) brightness(0.96);
+                transform: scale(0.98) translate(-10px, 8px);
+            }
+        }
+
+        /* Pinterest Scrapbook Film Aesthetic Badge */
+        .film-aesthetic-badge {
+            position: fixed;
+            top: 22px;
+            left: 24px;
+            z-index: 95;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(18, 14, 28, 0.62);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 215, 235, 0.25);
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: rgba(255, 240, 248, 0.9);
+            font-weight: 500;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+            pointer-events: none;
+            animation: badgeGentleSway 5s ease-in-out infinite alternate;
+        }
+
+        .film-aesthetic-badge .rec-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ff4d6d;
+            box-shadow: 0 0 10px #ff4d6d;
+            animation: recBlink 1.8s infinite ease-in-out;
+        }
+
+        @keyframes recBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        @keyframes badgeGentleSway {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-3px); }
+        }
+
+        @media (max-width: 768px) {
+            .film-aesthetic-badge {
+                top: auto;
+                bottom: 74px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 10px;
+                padding: 5px 12px;
+            }
+        }
+
+        /* FOREGROUND CONTAINER */
+        .foreground-stage {
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Photocard container and wrap */
+        .main-photo-wrap {
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gentleFloat 5s ease-in-out infinite alternate;
+        }
+
+        /* The Main Color Photo (Wallpaper Photo) */
+        .main-photo-card {
+            position: relative;
+            z-index: 35;
+            width: 280px;
+            height: 395px;
+            border-radius: 20px;
+            padding: 5px;
+            background: linear-gradient(135deg, rgba(255,232,31,0.65), rgba(255,100,160,0.4), rgba(255,215,0,0.85));
+            box-shadow: 
+                0 30px 70px rgba(0, 0, 0, 0.95),
+                0 0 50px rgba(255, 215, 0, 0.35),
+                0 0 90px rgba(255, 90, 160, 0.2);
+            transform-style: preserve-3d;
+            transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+
+        /* Pinterest Scrapbook Washi Tape */
+        .washi-tape {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            background: linear-gradient(135deg, rgba(255, 240, 225, 0.9), rgba(255, 225, 235, 0.85));
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-left: 3px dashed rgba(220, 160, 180, 0.5);
+            border-right: 3px dashed rgba(220, 160, 180, 0.5);
+            padding: 3px 18px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #63323e;
+            border-radius: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 45;
+            pointer-events: none;
+            font-family: 'Outfit', sans-serif;
+            white-space: nowrap;
+        }
+
+        /* Holographic Prismatic Photocard Foil Sheen */
+        .holographic-sheen {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: linear-gradient(
+                115deg,
+                transparent 15%,
+                rgba(255, 255, 255, 0.26) 30%,
+                rgba(255, 182, 193, 0.35) 42%,
+                rgba(255, 240, 180, 0.3) 52%,
+                rgba(180, 230, 255, 0.3) 62%,
+                transparent 78%
+            );
+            opacity: 0.65;
+            mix-blend-mode: color-dodge;
+            pointer-events: none;
+            transform: translate(-5%, -5%) scale(1.2);
+            transition: transform 0.15s ease-out, opacity 0.3s ease;
+        }
+
+        @keyframes gentleFloat {
+            0% {
+                transform: translateY(0px) scale(1);
+            }
+            100% {
+                transform: translateY(-8px) scale(1.015);
+            }
+        }
+
+        .main-photo-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: #15111c;
+        }
+
+        .main-photo-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: contrast(1.06) saturate(1.12);
+        }
+
+        .main-photo-inner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            box-shadow: inset 0 0 25px rgba(255, 215, 0, 0.2);
+            pointer-events: none;
+        }
+
+        /* HARRY POTTER / MAGICAL GOLDEN LETTERS 
+           EXACT SAME PLACEMENT AS REFERENCE PIC:
+           - "Happy" on the left flank at mid-height (chest level)
+           - "Birthday" on the right flank at mid-height (chest level)
+           - Fully visible (z-index: 45) - NEVER hidden!
+           - Sits below their heads so it never covers their faces!
+        */
+        .hp-word {
+            position: absolute;
+            top: 48%; /* Mid height, exactly like reference image */
+            font-family: 'Harry Potter Local', 'Harry P', 'Harry Potter', 'Cinzel Decorative', serif;
+            font-size: clamp(48px, 6vw, 92px);
+            font-weight: 900;
+            color: var(--gold-primary);
+            text-transform: capitalize;
+            letter-spacing: 2px;
+            line-height: 1;
+            z-index: 45; /* Fully visible, NEVER hidden behind the photo! */
+            pointer-events: none;
+            white-space: nowrap;
+            text-shadow: 
+                0 0 14px rgba(255, 232, 31, 0.95),
+                0 0 28px rgba(255, 200, 0, 0.8),
+                0 0 50px rgba(255, 170, 0, 0.55),
+                3px 3px 0px #181100,
+                5px 5px 12px rgba(0, 0, 0, 0.95);
+            animation: textGlowPulse 3s ease-in-out infinite alternate;
+        }
+
+        /* "Happy" on the LEFT flank */
+        .hp-word.happy {
+            right: calc(50% + 138px);
+            transform: translateY(-50%) rotate(-5deg);
+        }
+
+        /* "Birthday" on the RIGHT flank - fully visible, NOT hidden! */
+        .hp-word.birthday {
+            left: calc(50% + 138px);
+            transform: translateY(-50%) rotate(4deg);
+        }
+
+        @keyframes textGlowPulse {
+            0% {
+                text-shadow: 
+                    0 0 14px rgba(255, 232, 31, 0.85),
+                    0 0 28px rgba(255, 200, 0, 0.7),
+                    0 0 45px rgba(255, 170, 0, 0.45),
+                    3px 3px 0px #181100,
+                    5px 5px 8px rgba(0, 0, 0, 0.95);
+            }
+            100% {
+                text-shadow: 
+                    0 0 22px rgba(255, 245, 100, 1),
+                    0 0 42px rgba(255, 215, 0, 0.95),
+                    0 0 70px rgba(255, 180, 0, 0.75),
+                    3px 3px 0px #181100,
+                    6px 6px 14px rgba(0, 0, 0, 0.95);
+            }
+        }
+
+        /* Bottom Floating Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(18, 14, 28, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 10px 22px;
+            border-radius: 35px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.65);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #d1c4e9;
+        }
+
+        .slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .slider-wrap input[type="range"] {
+            width: 75px;
+            accent-color: #ffd700;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold-bright);
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: scale(1.08);
+        }
+
+        #audioFileInput {
+            display: none;
+        }
+
+        #exportCanvas {
+            display: none;
+        }
+
+        /* Record Countdown Overlay */
+        .record-overlay {
+            display: none;
+            position: fixed;
+            top: 76px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(220, 38, 38, 0.92);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 9px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 25px rgba(220, 38, 38, 0.6);
+            z-index: 200;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: rgba(24, 18, 38, 0.95);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: #ffd700;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 250;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.65);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .cylinder-carousel {
+                width: 155px;
+                height: 220px;
+            }
+            .carousel-panel {
+                width: 155px;
+                height: 220px;
+            }
+            .panel-1 { transform: rotateY(0deg) translateZ(260px); }
+            .panel-2 { transform: rotateY(40deg) translateZ(260px); }
+            .panel-3 { transform: rotateY(80deg) translateZ(260px); }
+            .panel-4 { transform: rotateY(120deg) translateZ(260px); }
+            .panel-5 { transform: rotateY(160deg) translateZ(260px); }
+            .panel-6 { transform: rotateY(200deg) translateZ(260px); }
+            .panel-7 { transform: rotateY(240deg) translateZ(260px); }
+            .panel-8 { transform: rotateY(280deg) translateZ(260px); }
+            .panel-9 { transform: rotateY(320deg) translateZ(260px); }
+
+            .main-photo-card {
+                width: 200px;
+                height: 285px;
+            }
+
+            .hp-word {
+                font-size: 44px;
+            }
+
+            .hp-word.happy {
+                right: calc(50% + 102px);
+            }
+
+            .hp-word.birthday {
+                left: calc(50% + 102px);
+            }
+
+            .bottom-bar {
+                bottom: 12px;
+                padding: 7px 14px;
+                gap: 8px;
+            }
+
+            .slider-group-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Ambient Pinterest Vintage Film Light Leak & Prism Flare -->
+    <div class="vintage-prism-leak"></div>
+
+    <!-- Pinterest Aesthetic Scrapbook Film Badge -->
+    <div class="film-aesthetic-badge" id="filmAestheticBadge">
+        <span class="rec-dot"></span>
+        <span class="badge-text">REC • 24 FPS • ୨୧ MEMORIES ✦</span>
+    </div>
+
+    <!-- Floating sparkles & Pinterest particles canvas -->
+    <canvas id="sparkleCanvas"></canvas>
+
+    <!-- Hidden export canvas for direct 1-click video creation -->
+    <canvas id="exportCanvas" width="1080" height="1920"></canvas>
+
+    <!-- Top Navigation & Actions -->
+    <nav class="top-nav">
+        <button class="nav-btn" onclick="goBackToCake()" title="Back to Birthday Cake">
+            ← Back
+        </button>
+        <button class="nav-btn primary" id="recordBtn" onclick="startDirectVideoExport()">
+            <span>🎥</span> <span id="recordBtnText">Download Video</span>
+        </button>
+        <button class="nav-btn celebration-btn" id="celebrationNavBtn" onclick="openCelebrationOverlay()" title="Celebrate Renesaan - Fireworks & Wishes">
+            <span>✨</span> <span>Celebrate Renesaan 🎆</span>
+        </button>
+        <button class="nav-btn" onclick="toggleFullscreen()" title="Full screen">
+            <span>⛶</span>
+        </button>
+    </nav>
+
+    <!-- Full-Screen Cinematic Birthday Celebration Overlay (Pinterest Scrapbook Aesthetic) -->
+    <div class="celebration-overlay" id="celebrationOverlay">
+        <canvas id="fireworksCanvas"></canvas>
+
+        <!-- Floating Background Stickers & Decos -->
+        <div class="cel-deco cel-deco-bow-1">୨୧</div>
+        <div class="cel-deco cel-deco-star-1">✦</div>
+        <div class="cel-deco cel-deco-heart-1">♡</div>
+        <div class="cel-deco cel-deco-cherry-1">🍒</div>
+        <div class="cel-deco cel-deco-flower-1">🌸</div>
+        <div class="cel-deco cel-deco-sparkle-1">✨</div>
+        <div class="cel-deco cel-deco-bow-2">୨୧</div>
+        <div class="cel-deco cel-deco-star-2">✧</div>
+        <div class="cel-deco cel-deco-heart-2">♥</div>
+
+        <!-- Center Celebration Scrapbook Card -->
+        <div class="celebration-card" id="celebrationCard">
+            <!-- Washi Tape Accents -->
+            <div class="cel-washi cel-washi-left"></div>
+            <div class="cel-washi cel-washi-right"></div>
+
+            <!-- Coquette Ribbon Badge -->
+            <div class="cel-ribbon-badge">୨୧ special celebration ୨୧</div>
+
+            <!-- Close / Return Button -->
+            <button class="celebration-close-btn" onclick="closeCelebrationOverlay()" title="Return to 3D Memories">
+                ✕
+            </button>
+
+            <!-- Eyebrow Tag -->
+            <span class="celebration-eyebrow">⋆ ｡˚ chapter 21 milestone ｡˚ ⋆</span>
+
+            <!-- Title in Editorial Playfair Typography -->
+            <h1 class="celebration-title">Happiiiieeeeee Birthday</h1>
+            <div class="celebration-name">Renesaan <span class="heart-beat">♡</span></div>
+
+            <!-- Metallic 21 Balloons Scrapbook Charm -->
+            <div class="celebration-balloons-stage">
+                <div class="balloons-glow-aura"></div>
+                <img src="assets/balloons_21.png" onerror="this.src='public/balloons_21.png'" alt="21" class="celebration-balloons-img">
+                <div class="balloons-tag">twenty-one & magical ୨୧</div>
+            </div>
+
+            <!-- Heartfelt Personal Wish Message -->
+            <p class="celebration-wish-text">
+                May your 21st year be filled with endless laughter, sweet little adventures, lifelong happiness, and all your biggest dreams coming true. Stay the wonderful, bright soul you are always! ✨🎂💖
+            </p>
+
+            <!-- Decorative Scrapbook Divider -->
+            <div class="celebration-divider">
+                <span>✦</span>
+                <span>♡</span>
+                <span>✿</span>
+                <span>୨୧</span>
+                <span>✿</span>
+                <span>♡</span>
+                <span>✦</span>
+            </div>
+
+            <!-- Interactive Action Buttons -->
+            <div class="celebration-actions-row">
+                <button type="button" class="celebration-btn-action primary" onclick="launchCelebrationFireworks()">
+                    <span>🎆</span> Launch Fireworks!
+                </button>
+                <button type="button" class="celebration-btn-action" onclick="toggleMusic()">
+                    <span id="overlayAudioIcon">🎵</span> Music
+                </button>
+                <button type="button" class="celebration-btn-action" onclick="closeCelebrationOverlay()">
+                    <span>📽️</span> 3D Memories
+                </button>
+            </div>
+
+            <!-- Cute tap hint -->
+            <div class="celebration-tap-hint">
+                « ୨୧ tap anywhere to burst celebration fireworks ୨୧ »
+            </div>
+        </div>
+    </div>
+
+    <!-- Recording status pill -->
+    <div class="record-overlay" id="recordOverlay">
+        <span>🎬 CREATING YOUR VIDEO...</span>
+        <span id="recordTimer">15s</span>
+    </div>
+
+    <!-- 3D Stage -->
+    <main class="stage-container" id="stageContainer">
+
+        <!-- 3D Rotating Carousel Cylinder (B&W Photos) -->
+        <div class="cylinder-carousel" id="carousel">
+            <div class="carousel-panel panel-1">
+                <img src="public/birthday_photos/photo1.jpg" onerror="this.src='assets/birthday_photos/photo1.jpg'" alt="Memory 1">
+            </div>
+            <div class="carousel-panel panel-2">
+                <img src="public/birthday_photos/photo2.jpg" onerror="this.src='assets/birthday_photos/photo2.jpg'" alt="Memory 2">
+            </div>
+            <div class="carousel-panel panel-3">
+                <img src="public/birthday_photos/photo3.jpg" onerror="this.src='assets/birthday_photos/photo3.jpg'" alt="Memory 3">
+            </div>
+            <div class="carousel-panel panel-4">
+                <img src="public/birthday_photos/photo4.jpg" onerror="this.src='assets/birthday_photos/photo4.jpg'" alt="Memory 4">
+            </div>
+            <div class="carousel-panel panel-5">
+                <img src="public/birthday_photos/photo5.jpg" onerror="this.src='assets/birthday_photos/photo5.jpg'" alt="Memory 5">
+            </div>
+            <div class="carousel-panel panel-6">
+                <img src="public/birthday_photos/photo6.jpg" onerror="this.src='assets/birthday_photos/photo6.jpg'" alt="Memory 6">
+            </div>
+            <div class="carousel-panel panel-7">
+                <img src="public/birthday_photos/photo7.jpg" onerror="this.src='assets/birthday_photos/photo7.jpg'" alt="Memory 7">
+            </div>
+            <div class="carousel-panel panel-8">
+                <img src="public/birthday_photos/photo8.jpg" onerror="this.src='assets/birthday_photos/photo8.jpg'" alt="Memory 8">
+            </div>
+            <div class="carousel-panel panel-9">
+                <img src="public/birthday_photos/photo9.jpg" onerror="this.src='assets/birthday_photos/photo9.jpg'" alt="Memory 9">
+            </div>
+        </div>
+
+        <!-- Foreground Section: Main Photo (Color) & Letters in exact same reference place -->
+        <div class="foreground-stage">
+            
+            <!-- Left "Happy" - positioned to left flank at mid-height -->
+            <div class="hp-word happy">Happy</div>
+
+            <!-- Foreground Main Photo (2nd photo in vibrant full color) -->
+            <div class="main-photo-wrap" id="mainPhotoWrap">
+                <div class="main-photo-card" id="mainPhotoCard">
+                    <!-- Pinterest Washi Tape / Scrapbook Clip -->
+                    <div class="washi-tape"><span>✦ memories ✦</span></div>
+                    <div class="main-photo-inner">
+                        <img id="mainImg" src="public/birthday_photos/main_photo.jpg" onerror="this.src='assets/birthday_photos/main_photo.jpg'" alt="Happy Birthday Wallpaper Photo">
+                        <!-- Holographic Prismatic Sheen Overlay -->
+                        <div class="holographic-sheen" id="holoSheen"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right "Birthday" - positioned to right flank at mid-height, 100% visible, NOT hidden! -->
+            <div class="hp-word birthday">Birthday</div>
+
+        </div>
+
+    </main>
+
+    <!-- Bottom Controls -->
+    <div class="bottom-bar">
+        <button class="icon-btn" id="playPauseBtn" onclick="toggleSpin()" title="Pause/Play Rotation">
+            ⏸
+        </button>
+
+        <div class="control-group">
+            <span class="slider-group-label">Speed:</span>
+            <div class="slider-wrap">
+                <input type="range" id="speedSlider" min="10" max="60" value="26" oninput="changeRotationSpeed(this.value)">
+            </div>
+        </div>
+
+        <button class="icon-btn" id="audioToggleBtn" onclick="toggleMusic()" title="Play/Mute Music">
+            🎵
+        </button>
+
+        <!-- Volume slider for volume control -->
+        <div class="control-group">
+            <span>Vol:</span>
+            <div class="slider-wrap">
+                <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.75" oninput="setMasterVolume(this.value)" title="Volume Slider">
+            </div>
+        </div>
+
+        <button class="icon-btn" onclick="reverseDirection()" title="Reverse Rotation Direction">
+            🔄
+        </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">✨ Playing Birthday Lullaby Melody 🎶</div>
+
+    <script>
+        // If refreshed, always restart from root / (lock screen)
+        try {
+            var isReload = false;
+            var navEntries = performance.getEntriesByType && performance.getEntriesByType("navigation");
+            if (navEntries && navEntries.length > 0) {
+                isReload = (navEntries[0].type === "reload");
+            } else if (performance.navigation) {
+                isReload = (performance.navigation.type === 1);
+            }
+            if (isReload) {
+                sessionStorage.clear();
+                window.location.replace("index.html");
+            }
+        } catch (e) {}
+
+        // Back navigation to the Birthday Cake Page
+        function goBackToCake() {
+            sessionStorage.setItem("lastActivePage", "birthdayCakePage");
+            sessionStorage.setItem("siteUnlocked", "true");
+            sessionStorage.setItem("returnToCake", "true");
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "index.html?page=cake#birthdayCakePage";
+            }
+        }
+        window.goBackToCake = goBackToCake;
+
+        // Celebration Overlay & Continuous Dreamy Atmosphere (Balanced, Pinterest-Aesthetic, Not Overdone)
+        const celebrationOverlay = document.getElementById('celebrationOverlay');
+        const fwCanvas = document.getElementById('fireworksCanvas');
+        let fwCtx = null;
+        let fwWidth = 0;
+        let fwHeight = 0;
+        let fwAnimationId = null;
+        const celebrationParticles = [];
+        let ambientCelebrationItems = [];
+
+        function initFireworksCanvas() {
+            if (!fwCanvas) return;
+            fwCtx = fwCanvas.getContext('2d');
+            fwWidth = fwCanvas.width = window.innerWidth;
+            fwHeight = fwCanvas.height = window.innerHeight;
+            initAmbientCelebrationItems();
+        }
+
+        window.addEventListener('resize', () => {
+            if (fwCanvas) {
+                fwWidth = fwCanvas.width = window.innerWidth;
+                fwHeight = fwCanvas.height = window.innerHeight;
+            }
+        });
+
+        // Continuous Aesthetic Ambient Items (Subtle, Dreamy, Never Overwhelming)
+        function initAmbientCelebrationItems() {
+            ambientCelebrationItems = [];
+
+            // 1. Gentle 3D Sakura & Rose Petals (18 delicate petals)
+            for (let i = 0; i < 18; i++) {
+                ambientCelebrationItems.push({
+                    kind: 'petal',
+                    x: Math.random() * fwWidth,
+                    y: Math.random() * fwHeight,
+                    size: Math.random() * 8 + 12,
+                    fallSpeed: Math.random() * 0.6 + 0.75, // slow, serene drift
+                    swayAngle: Math.random() * Math.PI * 2,
+                    swaySpeed: Math.random() * 0.02 + 0.012,
+                    swayDist: Math.random() * 1.4 + 0.8,
+                    tumbleAngle: Math.random() * Math.PI * 2,
+                    tumbleSpeed: Math.random() * 0.025 + 0.015,
+                    rollAngle: Math.random() * Math.PI * 2,
+                    rollSpeed: (Math.random() - 0.5) * 0.015,
+                    c1: Math.random() > 0.5 ? '#ffffff' : '#fff5f7',
+                    c2: Math.random() > 0.4 ? '#ffccd5' : '#ffb7c5',
+                    alpha: Math.random() * 0.25 + 0.6
+                });
+            }
+
+            // 2. Soft Floating Pinterest Charms (୨୧, ✦, ♡, ✧) (12 dainty charms)
+            const charms = ['୨୧', '✦', '♡', '✧'];
+            const charmColors = ['#ffe87c', '#ffccd5', '#ffffff', '#f0e6ff'];
+            for (let i = 0; i < 12; i++) {
+                ambientCelebrationItems.push({
+                    kind: 'charm',
+                    charm: charms[Math.floor(Math.random() * charms.length)],
+                    x: Math.random() * fwWidth,
+                    y: Math.random() * fwHeight,
+                    size: Math.random() * 6 + 14,
+                    speedY: -(Math.random() * 0.35 + 0.25),
+                    sway: Math.random() * Math.PI * 2,
+                    swaySpeed: Math.random() * 0.018 + 0.008,
+                    alpha: Math.random() * 0.3 + 0.45,
+                    color: charmColors[Math.floor(Math.random() * charmColors.length)],
+                    pulse: Math.random() * Math.PI * 2
+                });
+            }
+
+            // 3. Ethereal Soft Bokeh Orbs (8 dreamy orbs in far background)
+            for (let i = 0; i < 8; i++) {
+                ambientCelebrationItems.push({
+                    kind: 'bokeh',
+                    x: Math.random() * fwWidth,
+                    y: Math.random() * fwHeight,
+                    radius: Math.random() * 32 + 25,
+                    speedY: -(Math.random() * 0.2 + 0.08),
+                    speedX: (Math.random() - 0.5) * 0.15,
+                    phase: Math.random() * Math.PI * 2,
+                    color: Math.random() > 0.5 ? '255, 215, 0' : '255, 120, 170',
+                    alpha: Math.random() * 0.08 + 0.05
+                });
+            }
+
+            // 4. Subtle Fairydust Sparkles (16 gentle points)
+            for (let i = 0; i < 16; i++) {
+                ambientCelebrationItems.push({
+                    kind: 'sparkle',
+                    x: Math.random() * fwWidth,
+                    y: Math.random() * fwHeight,
+                    size: Math.random() * 2 + 1,
+                    speedY: -(Math.random() * 0.25 + 0.1),
+                    phase: Math.random() * Math.PI * 2,
+                    color: Math.random() > 0.4 ? '#fff59d' : '#ffffff',
+                    alpha: Math.random() * 0.5 + 0.35
+                });
+            }
+        }
+
+        function openCelebrationOverlay() {
+            initFireworksCanvas();
+            celebrationOverlay.classList.add('active');
+            playChimeSound(659.25, 0.4);
+            setTimeout(() => playChimeSound(783.99, 0.45), 160);
+            startFireworksLoop();
+            // Launch 3 elegant celebratory greeting bursts
+            setTimeout(launchCelebrationFireworks, 250);
+        }
+
+        function closeCelebrationOverlay() {
+            celebrationOverlay.classList.remove('active');
+            if (fwAnimationId) {
+                cancelAnimationFrame(fwAnimationId);
+                fwAnimationId = null;
+            }
+        }
+
+        window.openCelebrationOverlay = openCelebrationOverlay;
+        window.closeCelebrationOverlay = closeCelebrationOverlay;
+
+        // Fireworks Particle Engine with rich celebration palettes
+        let autoFireworkTimer = 0;
+        const fwColors = [
+            ['#FFE81F', '#FFF566', '#FF9900', '#FFFFFF', '#FFA500'], // Royal Gold & Champagne
+            ['#FF416C', '#FF758F', '#FFA07A', '#FFFFFF', '#FFB7C5'], // Rose Ruby & Sakura
+            ['#A855F7', '#C084FC', '#E9D5FF', '#FFE81F', '#F472B6'], // Violet Amethyst & Pink
+            ['#38BDF8', '#818CF8', '#E0E7FF', '#FFFFFF', '#FDE047']  // Starfire Diamond
+        ];
+
+        function createCelebrationBurst(x, y, isBig = false) {
+            const palette = fwColors[Math.floor(Math.random() * fwColors.length)];
+            const count = isBig ? 70 : 48;
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.22;
+                const speed = Math.random() * (isBig ? 5.8 : 4.2) + 1.8;
+                celebrationParticles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    gravity: 0.055,
+                    alpha: 1,
+                    decay: Math.random() * 0.015 + 0.01,
+                    size: Math.random() * 2.8 + 1.2,
+                    color: palette[Math.floor(Math.random() * palette.length)]
+                });
+            }
+            // Central flash
+            celebrationParticles.push({
+                x: x,
+                y: y,
+                vx: 0,
+                vy: 0,
+                gravity: 0,
+                alpha: 0.9,
+                decay: 0.07,
+                size: isBig ? 26 : 18,
+                color: '#ffffff',
+                isFlash: true
+            });
+        }
+
+        // Rocket Launch with sparkling smoke trail rising before bursting
+        function launchRocket(targetX, targetY) {
+            const startX = targetX + (Math.random() - 0.5) * 50;
+            const startY = fwHeight + 20;
+            const flightTime = 34;
+            const vx = (targetX - startX) / flightTime;
+            const vy = (targetY - startY) / flightTime;
+
+            let frames = 0;
+            function stepRocket() {
+                if (!celebrationOverlay.classList.contains('active')) return;
+                frames++;
+                const curX = startX + vx * frames;
+                const curY = startY + vy * frames;
+
+                // Spark trail behind rocket
+                celebrationParticles.push({
+                    x: curX + (Math.random() - 0.5) * 3,
+                    y: curY + (Math.random() - 0.5) * 3,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: Math.random() * 1.0 + 0.5,
+                    gravity: 0.035,
+                    alpha: 0.85,
+                    decay: 0.035,
+                    size: Math.random() * 2 + 1,
+                    color: '#ffd700'
+                });
+
+                if (frames >= flightTime) {
+                    createCelebrationBurst(targetX, targetY, true);
+                    playChimeSound(520 + Math.random() * 320, 0.32);
+                } else {
+                    requestAnimationFrame(stepRocket);
+                }
+            }
+            requestAnimationFrame(stepRocket);
+        }
+
+        // Automatic opening celebration salvo
+        function launchCelebrationFireworks() {
+            const burstLocations = [
+                { x: fwWidth * 0.20, y: fwHeight * 0.28 },
+                { x: fwWidth * 0.80, y: fwHeight * 0.26 },
+                { x: fwWidth * 0.50, y: fwHeight * 0.16 },
+                { x: fwWidth * 0.30, y: fwHeight * 0.42 },
+                { x: fwWidth * 0.70, y: fwHeight * 0.40 }
+            ];
+
+            burstLocations.forEach((pt, idx) => {
+                setTimeout(() => {
+                    launchRocket(pt.x, pt.y);
+                }, idx * 220);
+            });
+        }
+
+        window.launchCelebrationFireworks = launchCelebrationFireworks;
+
+        // Interactive Click/Tap Fireworks (User can trigger anytime!)
+        if (fwCanvas) {
+            fwCanvas.addEventListener('click', (e) => {
+                if (e.target.closest('.celebration-card')) return;
+                createCelebrationBurst(e.clientX, e.clientY, true);
+                playChimeSound(523.25 + Math.random() * 300, 0.32);
+            });
+        }
+
+        function playChimeSound(freq, duration = 0.35) {
+            try {
+                const AudioConstructor = window.AudioContext || window.webkitAudioContext;
+                if (!AudioConstructor) return;
+                const ctx = new AudioConstructor();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // Continuous Automatic Fireworks & Dreamy Atmosphere Loop ("Till the end")
+        function startFireworksLoop() {
+            if (fwAnimationId) return;
+
+            function loop() {
+                if (!celebrationOverlay.classList.contains('active')) {
+                    fwAnimationId = null;
+                    return;
+                }
+                fwCtx.clearRect(0, 0, fwWidth, fwHeight);
+
+                // 1. Continuous Ambient Dreamy Items: Falling Petals, Floating Charms, Soft Bokeh
+                ambientCelebrationItems.forEach(item => {
+                    if (item.kind === 'bokeh') {
+                        item.y += item.speedY;
+                        item.x += item.speedX;
+                        item.phase += 0.015;
+                        if (item.y < -item.radius * 2) item.y = fwHeight + item.radius;
+                        if (item.x < -item.radius * 2) item.x = fwWidth + item.radius;
+                        if (item.x > fwWidth + item.radius * 2) item.x = -item.radius;
+
+                        fwCtx.save();
+                        const curR = item.radius * (1 + 0.12 * Math.sin(item.phase));
+                        const curA = item.alpha * (0.85 + 0.15 * Math.sin(item.phase));
+                        fwCtx.globalAlpha = curA;
+                        const grad = fwCtx.createRadialGradient(item.x, item.y, 0, item.x, item.y, curR);
+                        grad.addColorStop(0, `rgba(${item.color}, 0.5)`);
+                        grad.addColorStop(0.5, `rgba(${item.color}, 0.15)`);
+                        grad.addColorStop(1, `rgba(${item.color}, 0)`);
+                        fwCtx.fillStyle = grad;
+                        fwCtx.beginPath();
+                        fwCtx.arc(item.x, item.y, curR, 0, Math.PI * 2);
+                        fwCtx.fill();
+                        fwCtx.restore();
+                    }
+                    else if (item.kind === 'petal') {
+                        item.swayAngle += item.swaySpeed;
+                        item.x += Math.sin(item.swayAngle) * item.swayDist + 0.15;
+                        item.y += item.fallSpeed;
+                        item.tumbleAngle += item.tumbleSpeed;
+                        item.rollAngle += item.rollSpeed;
+
+                        if (item.y > fwHeight + 25) {
+                            item.y = -20;
+                            item.x = Math.random() * fwWidth;
+                        }
+                        if (item.x < -20) item.x = fwWidth + 10;
+                        if (item.x > fwWidth + 20) item.x = -10;
+
+                        fwCtx.save();
+                        fwCtx.translate(item.x, item.y);
+                        fwCtx.rotate(item.rollAngle);
+                        const cosT = Math.cos(item.tumbleAngle);
+                        fwCtx.scale(1, Math.max(0.14, Math.abs(cosT)));
+                        fwCtx.globalAlpha = item.alpha * (0.8 + 0.2 * Math.abs(cosT));
+
+                        const grad = fwCtx.createRadialGradient(0, -item.size * 0.2, 1, 0, 0, item.size);
+                        grad.addColorStop(0, item.c1);
+                        grad.addColorStop(0.5, item.c2);
+                        grad.addColorStop(1, '#ff9ebb');
+                        fwCtx.fillStyle = grad;
+
+                        fwCtx.beginPath();
+                        const w = item.size * 0.75;
+                        const h = item.size;
+                        fwCtx.moveTo(0, -h);
+                        fwCtx.bezierCurveTo(w * 1.2, -h * 0.6, w * 1.1, h * 0.5, 0, h);
+                        fwCtx.bezierCurveTo(-w * 1.1, h * 0.5, -w * 1.2, -h * 0.6, 0, -h);
+                        fwCtx.fill();
+                        fwCtx.restore();
+                    }
+                    else if (item.kind === 'charm') {
+                        item.y += item.speedY;
+                        item.sway += item.swaySpeed;
+                        item.x += Math.sin(item.sway) * 0.4;
+                        item.pulse += 0.025;
+
+                        if (item.y < -30) {
+                            item.y = fwHeight + 20;
+                            item.x = Math.random() * fwWidth;
+                        }
+
+                        fwCtx.save();
+                        const pScale = 1 + 0.1 * Math.sin(item.pulse);
+                        fwCtx.globalAlpha = item.alpha * (0.85 + 0.15 * Math.sin(item.pulse));
+                        fwCtx.translate(item.x, item.y);
+                        fwCtx.scale(pScale, pScale);
+                        fwCtx.font = `${item.size}px "Outfit", "Segoe UI Symbol", sans-serif`;
+                        fwCtx.textAlign = 'center';
+                        fwCtx.textBaseline = 'middle';
+                        fwCtx.fillStyle = item.color;
+                        fwCtx.shadowColor = item.color;
+                        fwCtx.shadowBlur = 6;
+                        fwCtx.fillText(item.charm, 0, 0);
+                        fwCtx.restore();
+                    }
+                    else if (item.kind === 'sparkle') {
+                        item.y += item.speedY;
+                        item.phase += 0.03;
+                        if (item.y < -10) {
+                            item.y = fwHeight + 10;
+                            item.x = Math.random() * fwWidth;
+                        }
+
+                        fwCtx.save();
+                        const a = Math.max(0.15, Math.abs(Math.sin(item.phase)));
+                        fwCtx.globalAlpha = item.alpha * a;
+                        fwCtx.fillStyle = item.color;
+                        fwCtx.shadowColor = '#ffd700';
+                        fwCtx.shadowBlur = 6;
+                        fwCtx.beginPath();
+                        fwCtx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                        fwCtx.fill();
+                        fwCtx.restore();
+                    }
+                });
+
+                // 2. CONTINUOUS AUTOMATIC FIREWORKS (Shooting Rockets & Bursts Around Card)
+                autoFireworkTimer++;
+                if (autoFireworkTimer % 115 === 0) { // Automatically launch every ~1.9s continuously till the end
+                    const side = Math.random();
+                    let tx, ty;
+                    if (side < 0.4) { // Left flank
+                        tx = fwWidth * (0.12 + Math.random() * 0.18);
+                        ty = fwHeight * (0.18 + Math.random() * 0.35);
+                    } else if (side < 0.8) { // Right flank
+                        tx = fwWidth * (0.70 + Math.random() * 0.18);
+                        ty = fwHeight * (0.18 + Math.random() * 0.35);
+                    } else { // Top
+                        tx = fwWidth * (0.30 + Math.random() * 0.40);
+                        ty = fwHeight * (0.10 + Math.random() * 0.18);
+                    }
+                    launchRocket(tx, ty);
+                }
+
+                // 3. Render Active Fireworks Particles
+                for (let i = celebrationParticles.length - 1; i >= 0; i--) {
+                    const p = celebrationParticles[i];
+                    if (p.isFlash) {
+                        fwCtx.save();
+                        fwCtx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                        fwCtx.shadowColor = '#ffffff';
+                        fwCtx.shadowBlur = 12;
+                        fwCtx.beginPath();
+                        fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        fwCtx.fill();
+                        fwCtx.restore();
+                        p.alpha -= p.decay;
+                        if (p.alpha <= 0) celebrationParticles.splice(i, 1);
+                        continue;
+                    }
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.alpha -= p.decay;
+
+                    if (p.alpha <= 0) {
+                        celebrationParticles.splice(i, 1);
+                        continue;
+                    }
+
+                    fwCtx.save();
+                    fwCtx.globalAlpha = p.alpha;
+                    fwCtx.fillStyle = p.color;
+                    fwCtx.shadowColor = p.color;
+                    fwCtx.shadowBlur = 6;
+                    fwCtx.beginPath();
+                    fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    fwCtx.fill();
+                    fwCtx.restore();
+                }
+
+                fwAnimationId = requestAnimationFrame(loop);
+            }
+            fwAnimationId = requestAnimationFrame(loop);
+        }
+
+        // ==========================================
+        // 1. Interactive Rotation & Controls
+        // ==========================================
+        const carousel = document.getElementById('carousel');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        let isSpinning = true;
+        let isReversed = false;
+        let currentDuration = 26;
+
+        function toggleSpin() {
+            isSpinning = !isSpinning;
+            if (isSpinning) {
+                carousel.classList.remove('paused');
+                playPauseBtn.textContent = '⏸';
+            } else {
+                carousel.classList.add('paused');
+                playPauseBtn.textContent = '▶';
+            }
+        }
+
+        function changeRotationSpeed(val) {
+            currentDuration = val;
+            carousel.style.animationDuration = val + 's';
+        }
+
+        function reverseDirection() {
+            isReversed = !isReversed;
+            if (isReversed) {
+                carousel.style.animationDirection = 'reverse';
+                showToast('🔄 Rotation reversed!');
+            } else {
+                carousel.style.animationDirection = 'normal';
+                showToast('🔄 Normal rotation');
+            }
+        }
+
+        // Drag to rotate interactively
+        let isDragging = false;
+        let startX = 0;
+        let currentYAngle = 0;
+
+        window.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.top-nav') || e.target.closest('.bottom-bar')) return;
+            isDragging = true;
+            startX = e.clientX;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            startX = e.clientX;
+            currentYAngle += deltaX * 0.4;
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.top-nav') || e.target.closest('.bottom-bar')) return;
+            isDragging = true;
+            startX = e.touches[0].clientX;
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.touches[0].clientX - startX;
+            startX = e.touches[0].clientX;
+            currentYAngle += deltaX * 0.4;
+        });
+        window.addEventListener('touchend', () => { isDragging = false; });
+
+        // ==========================================
+        // 2. GENTLE BIRTHDAY TUNE (LOUDER & CLEAR)
+        // ==========================================
+        let audioCtx = null;
+        let masterGainNode = null;
+        let lowpassFilter = null;
+        let audioDestNode = null;
+        let isMusicPlaying = false;
+        let synthTimeout = null;
+
+        const audioToggleBtn = document.getElementById('audioToggleBtn');
+        const volSlider = document.getElementById('volSlider');
+
+        const softNotes = [
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 293.66, dur: 0.95 }, // D4
+            { note: 261.63, dur: 0.90 }, // C4
+            { note: 349.23, dur: 0.95 }, // F4
+            { note: 329.63, dur: 1.60 }, // E4
+
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 293.66, dur: 0.95 }, // D4
+            { note: 261.63, dur: 0.90 }, // C4
+            { note: 392.00, dur: 0.95 }, // G4
+            { note: 349.23, dur: 1.70 }, // F4
+
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 261.63, dur: 0.55 }, // C4
+            { note: 523.25, dur: 1.05 }, // C5
+            { note: 440.00, dur: 0.90 }, // A4
+            { note: 349.23, dur: 0.90 }, // F4
+            { note: 329.63, dur: 0.90 }, // E4
+            { note: 293.66, dur: 1.60 }, // D4
+
+            { note: 466.16, dur: 0.55 }, // Bb4
+            { note: 466.16, dur: 0.55 }, // Bb4
+            { note: 440.00, dur: 0.95 }, // A4
+            { note: 349.23, dur: 0.95 }, // F4
+            { note: 392.00, dur: 1.00 }, // G4
+            { note: 349.23, dur: 2.40 }, // F4
+        ];
+
+        function initAudioEngine() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Louder, clear master gain
+            masterGainNode = audioCtx.createGain();
+            const initVol = volSlider ? parseFloat(volSlider.value) : 0.75;
+            masterGainNode.gain.setValueAtTime(initVol * 0.45, audioCtx.currentTime);
+
+            // Warm lowpass filter to prevent any harshness
+            lowpassFilter = audioCtx.createBiquadFilter();
+            lowpassFilter.type = 'lowpass';
+            lowpassFilter.frequency.setValueAtTime(1400, audioCtx.currentTime);
+
+            // Soft stereo ambiance
+            const echoNode = audioCtx.createDelay();
+            echoNode.delayTime.setValueAtTime(0.32, audioCtx.currentTime);
+
+            const echoGain = audioCtx.createGain();
+            echoGain.gain.setValueAtTime(0.28, audioCtx.currentTime);
+
+            masterGainNode.connect(lowpassFilter);
+            lowpassFilter.connect(audioCtx.destination);
+
+            lowpassFilter.connect(echoNode);
+            echoNode.connect(echoGain);
+            echoGain.connect(echoNode);
+            echoGain.connect(audioCtx.destination);
+
+            if (audioDestNode) {
+                lowpassFilter.connect(audioDestNode);
+            }
+        }
+
+        function setMasterVolume(val) {
+            const num = parseFloat(val);
+            if (masterGainNode && audioCtx) {
+                masterGainNode.gain.setValueAtTime(num * 0.55, audioCtx.currentTime);
+            }
+        }
+
+        function playSoftTone(freq, duration) {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            // Pure tone oscillator
+            const osc = audioCtx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+
+            // Subtle smooth vibrato
+            const vib = audioCtx.createOscillator();
+            const vibGain = audioCtx.createGain();
+            vib.frequency.setValueAtTime(4.4, now);
+            vibGain.gain.setValueAtTime(freq * 0.010, now);
+            vib.connect(vibGain);
+            vibGain.connect(osc.frequency);
+            vib.start(now);
+            vib.stop(now + duration + 0.3);
+
+            // Note envelope (louder & clear)
+            const noteGain = audioCtx.createGain();
+            noteGain.gain.setValueAtTime(0.001, now);
+            noteGain.gain.linearRampToValueAtTime(0.22, now + 0.08); // louder attack
+            noteGain.gain.setValueAtTime(0.20, now + duration * 0.7);
+            noteGain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.25);
+
+            osc.connect(noteGain);
+            noteGain.connect(masterGainNode);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.3);
+
+            // Warm body harmonic
+            const harm = audioCtx.createOscillator();
+            harm.type = 'sine';
+            harm.frequency.setValueAtTime(freq / 2, now);
+            const harmGain = audioCtx.createGain();
+            harmGain.gain.setValueAtTime(0.001, now);
+            harmGain.gain.linearRampToValueAtTime(0.08, now + 0.12);
+            harmGain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.2);
+
+            harm.connect(harmGain);
+            harmGain.connect(masterGainNode);
+            harm.start(now);
+            harm.stop(now + duration + 0.25);
+        }
+
+        let melodyIdx = 0;
+        function playNextMelodyStep() {
+            if (!isMusicPlaying) return;
+            const item = softNotes[melodyIdx];
+
+            playSoftTone(item.note, item.dur * 1.3);
+
+            melodyIdx = (melodyIdx + 1) % softNotes.length;
+            synthTimeout = setTimeout(playNextMelodyStep, item.dur * 1000);
+        }
+
+        function toggleMusic() {
+            initAudioEngine();
+
+            if (isMusicPlaying) {
+                isMusicPlaying = false;
+                clearTimeout(synthTimeout);
+                audioToggleBtn.textContent = '🔇';
+                showToast('🔇 Music paused');
+            } else {
+                isMusicPlaying = true;
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                audioToggleBtn.textContent = '🎵';
+                playNextMelodyStep();
+                showToast('🎶 Playing Birthday Melody ✨');
+            }
+        }
+
+        // Auto-play on first click / tap anywhere
+        window.addEventListener('click', function initAudioOnce() {
+            if (!audioCtx) {
+                initAudioEngine();
+                isMusicPlaying = true;
+                audioToggleBtn.textContent = '🎵';
+                playNextMelodyStep();
+            }
+            window.removeEventListener('click', initAudioOnce);
+        }, { once: true });
+
+        // ==========================================
+        // 3. Pinterest Aesthetic Animation Engine
+        //    - 3D Tumbling Sakura & Rose Petals
+        //    - Floating Coquette Charms (୨୧, ✦, ♡, ✧)
+        //    - Dreamy Pastel Bokeh Orbs
+        //    - Twinkling Memory Stardust
+        //    - Interactive Click/Tap Blossom Breeze
+        // ==========================================
+        const canvas = document.getElementById('sparkleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 1. Tumbling 3D Sakura / Rose Petal
+        class SakuraPetal {
+            constructor(x, y, burst = false) {
+                this.type = 'petal';
+                this.reset(burst);
+                if (x !== undefined && y !== undefined) {
+                    this.x = x;
+                    this.y = y;
+                    if (burst) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = Math.random() * 4 + 2;
+                        this.vx = Math.cos(angle) * speed;
+                        this.vy = Math.sin(angle) * speed - 1.5;
+                    }
+                }
+            }
+            reset(burst = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = burst ? Math.random() * canvas.height : -20 - Math.random() * 50;
+                this.size = Math.random() * 8 + 10; // 10 to 18px
+                this.fallSpeed = Math.random() * 0.7 + 0.9; // 0.9 to 1.6
+                this.swayAngle = Math.random() * Math.PI * 2;
+                this.swaySpeed = Math.random() * 0.02 + 0.015;
+                this.swayWidth = Math.random() * 1.5 + 1.2;
+                this.tumbleAngle = Math.random() * Math.PI * 2;
+                this.tumbleSpeed = Math.random() * 0.035 + 0.02;
+                this.rollAngle = Math.random() * Math.PI * 2;
+                this.rollSpeed = (Math.random() - 0.5) * 0.018;
+                this.alpha = Math.random() * 0.35 + 0.65;
+                this.vx = 0;
+                this.vy = 0;
+
+                const palettes = [
+                    { c1: '#ffffff', c2: '#ffccd5', edge: '#ffb3c6' }, // soft sakura
+                    { c1: '#fff5f5', c2: '#ffb7c5', edge: '#f3839f' }, // blush rose
+                    { c1: '#fff9fb', c2: '#fbcfe8', edge: '#f472b6' }, // pink peony
+                    { c1: '#fffaf0', c2: '#fde2e4', edge: '#ffccd5' }, // champagne cream
+                ];
+                const p = palettes[Math.floor(Math.random() * palettes.length)];
+                this.color1 = p.c1;
+                this.color2 = p.c2;
+                this.edgeColor = p.edge;
+                this.color = p.c2; // Fallback for exportCanvas
+            }
+            update() {
+                if (Math.abs(this.vx) > 0.05 || Math.abs(this.vy) > 0.05) {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vx *= 0.94;
+                    this.vy = this.vy * 0.94 + 0.15;
+                } else {
+                    this.swayAngle += this.swaySpeed;
+                    this.x += Math.sin(this.swayAngle) * this.swayWidth + 0.3; // subtle rightward breeze
+                    this.y += this.fallSpeed;
+                }
+
+                this.tumbleAngle += this.tumbleSpeed;
+                this.rollAngle += this.rollSpeed;
+
+                if (this.y > canvas.height + 30) {
+                    this.reset();
+                }
+                if (this.x < -30) this.x = canvas.width + 20;
+                if (this.x > canvas.width + 30) this.x = -20;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rollAngle);
+
+                const cosT = Math.cos(this.tumbleAngle);
+                const sinT = Math.sin(this.tumbleAngle);
+                // Realistic 3D flip on X axis
+                ctx.scale(1, Math.max(0.12, Math.abs(cosT)));
+
+                const curAlpha = this.alpha * (0.7 + 0.3 * Math.abs(sinT));
+                ctx.globalAlpha = curAlpha;
+
+                // Organic petal shape
+                const w = this.size * 0.75;
+                const h = this.size;
+
+                const grad = ctx.createRadialGradient(0, -h * 0.2, 1, 0, 0, h);
+                grad.addColorStop(0, this.color1);
+                grad.addColorStop(0.5, this.color2);
+                grad.addColorStop(1, this.edgeColor);
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(0, -h);
+                ctx.bezierCurveTo(w * 1.2, -h * 0.6, w * 1.1, h * 0.5, 0, h);
+                ctx.bezierCurveTo(-w * 1.1, h * 0.5, -w * 1.2, -h * 0.6, 0, -h);
+                ctx.fill();
+
+                // Delicate central vein highlight
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(0, -h * 0.7);
+                ctx.quadraticCurveTo(w * 0.1, 0, 0, h * 0.6);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // 2. Pinterest Aesthetic Charms (୨୧, ✦, ♡, ✧)
+        class AestheticCharm {
+            constructor() {
+                this.type = 'charm';
+                this.charms = ['୨୧', '✦', '♡', '✧', '⋆'];
+                this.reset();
+            }
+            reset() {
+                this.charm = this.charms[Math.floor(Math.random() * this.charms.length)];
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 20 + Math.random() * 40;
+                this.size = Math.random() * 6 + 13; // 13 to 19px
+                this.speedY = -(Math.random() * 0.5 + 0.35); // floats upward
+                this.swayAngle = Math.random() * Math.PI * 2;
+                this.swaySpeed = Math.random() * 0.02 + 0.01;
+                this.swayDist = Math.random() * 0.8 + 0.4;
+                this.angle = (Math.random() - 0.5) * 0.3;
+                this.alpha = Math.random() * 0.4 + 0.45;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+
+                const colors = ['#ffe87c', '#ffccd5', '#ffffff', '#e8dff5', '#ffdfba'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.y += this.speedY;
+                this.swayAngle += this.swaySpeed;
+                this.x += Math.sin(this.swayAngle) * this.swayDist;
+                this.pulsePhase += 0.03;
+
+                if (this.y < -30) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                const pulse = 1 + 0.12 * Math.sin(this.pulsePhase);
+                ctx.globalAlpha = Math.min(1, Math.max(0.1, this.alpha * (0.8 + 0.2 * Math.sin(this.pulsePhase))));
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle + 0.05 * Math.sin(this.pulsePhase));
+                ctx.scale(pulse, pulse);
+
+                ctx.font = `${this.size}px "Outfit", "Segoe UI Symbol", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.fillText(this.charm, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        // 3. Dreamy Soft Pastel Bokeh Orbs
+        class BokehOrb {
+            constructor() {
+                this.type = 'bokeh';
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 32 + 22; // 22 to 54px
+                this.speedY = -(Math.random() * 0.25 + 0.1);
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.alpha = Math.random() * 0.12 + 0.08;
+                this.phase = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.015 + 0.01;
+
+                const tints = [
+                    '255, 182, 193', // soft rose pink
+                    '255, 235, 180', // soft champagne
+                    '225, 200, 255', // soft lilac
+                    '255, 204, 188'  // soft peach
+                ];
+                this.tint = tints[Math.floor(Math.random() * tints.length)];
+                this.color = `rgba(${this.tint}, 0.5)`; // for exportCanvas
+                this.size = this.radius * 0.2;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.phase += this.pulseSpeed;
+
+                if (this.y < -this.radius * 2) this.y = canvas.height + this.radius;
+                if (this.x < -this.radius * 2) this.x = canvas.width + this.radius;
+                if (this.x > canvas.width + this.radius * 2) this.x = -this.radius;
+            }
+            draw() {
+                ctx.save();
+                const curRadius = this.radius * (1 + 0.15 * Math.sin(this.phase));
+                const curAlpha = this.alpha * (0.8 + 0.2 * Math.sin(this.phase));
+                ctx.globalAlpha = curAlpha;
+
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, curRadius);
+                grad.addColorStop(0, `rgba(${this.tint}, 0.7)`);
+                grad.addColorStop(0.5, `rgba(${this.tint}, 0.25)`);
+                grad.addColorStop(1, `rgba(${this.tint}, 0)`);
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, curRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 4. Sparkling Fairydust Twinkles
+        class StardustTwinkle {
+            constructor() {
+                this.type = 'dust';
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.2 + 1;
+                this.speedY = -(Math.random() * 0.4 + 0.15);
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.phase = Math.random() * Math.PI * 2;
+                this.twinkleSpeed = Math.random() * 0.05 + 0.02;
+                this.color = Math.random() > 0.4 ? '#fff59d' : '#ffffff';
+                this.alpha = Math.random() * 0.6 + 0.4;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.phase += this.twinkleSpeed;
+                if (this.y < -10) this.y = canvas.height + 10;
+                if (this.x < -10) this.x = canvas.width + 10;
+                if (this.x > canvas.width + 10) this.x = -10;
+            }
+            draw() {
+                ctx.save();
+                const a = Math.max(0.1, Math.abs(Math.sin(this.phase)));
+                ctx.globalAlpha = this.alpha * a;
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = '#ffd700';
+                ctx.shadowBlur = 8;
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 4-point micro cross flare
+                if (this.size > 1.8 && a > 0.7) {
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - this.size * 2, this.y);
+                    ctx.lineTo(this.x + this.size * 2, this.y);
+                    ctx.moveTo(this.x, this.y - this.size * 2);
+                    ctx.lineTo(this.x, this.y + this.size * 2);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 28; i++) {
+            const p = new SakuraPetal();
+            p.y = Math.random() * canvas.height;
+            particles.push(p);
+        }
+        for (let i = 0; i < 16; i++) {
+            const c = new AestheticCharm();
+            c.y = Math.random() * canvas.height;
+            particles.push(c);
+        }
+        for (let i = 0; i < 12; i++) {
+            particles.push(new BokehOrb());
+        }
+        for (let i = 0; i < 35; i++) {
+            particles.push(new StardustTwinkle());
+        }
+
+        function animateSparkles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateSparkles);
+        }
+        animateSparkles();
+
+        // Interactive Blossom Breeze: click/tap stage to flutter petals
+        window.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('.top-nav') || e.target.closest('.bottom-bar') || e.target.closest('.celebration-overlay')) {
+                return;
+            }
+            const count = 7;
+            for (let i = 0; i < count; i++) {
+                const petal = new SakuraPetal(e.clientX, e.clientY, true);
+                particles.push(petal);
+            }
+            if (particles.length > 130) {
+                particles.splice(0, count);
+            }
+        });
+
+        // Interactive 3D Photocard Parallax Tilt & Holographic Foil Sheen
+        const mainCard = document.getElementById('mainPhotoCard');
+        const holoSheen = document.getElementById('holoSheen');
+
+        if (mainCard) {
+            let targetTiltX = 0;
+            let targetTiltY = 0;
+            let currentTiltX = 0;
+            let currentTiltY = 0;
+
+            window.addEventListener('mousemove', (e) => {
+                const cx = window.innerWidth / 2;
+                const cy = window.innerHeight / 2;
+                const dx = (e.clientX - cx) / cx;
+                const dy = (e.clientY - cy) / cy;
+
+                targetTiltY = dx * 7.5; // Max 7.5 deg
+                targetTiltX = -dy * 7.5;
+            });
+
+            window.addEventListener('mouseleave', () => {
+                targetTiltX = 0;
+                targetTiltY = 0;
+            });
+
+            function updateCardTilt() {
+                currentTiltX += (targetTiltX - currentTiltX) * 0.08;
+                currentTiltY += (targetTiltY - currentTiltY) * 0.08;
+
+                mainCard.style.transform = `rotateX(${currentTiltX.toFixed(2)}deg) rotateY(${currentTiltY.toFixed(2)}deg)`;
+                
+                if (holoSheen) {
+                    const sheenX = -currentTiltY * 4.5;
+                    const sheenY = currentTiltX * 4.5;
+                    holoSheen.style.transform = `translate(${sheenX.toFixed(1)}px, ${sheenY.toFixed(1)}px) scale(1.25)`;
+                }
+                requestAnimationFrame(updateCardTilt);
+            }
+            updateCardTilt();
+        }
+
+        // ==========================================
+        // 4. One-Click Direct Video Export (WebM / MP4)
+        // ==========================================
+        const exportCanvas = document.getElementById('exportCanvas');
+        const exportCtx = exportCanvas.getContext('2d');
+        const bgPhotoImgs = [];
+        let mainPhotoImg = null;
+        let isExporting = false;
+
+        const photoPaths = [
+            'public/birthday_photos/photo1.jpg',
+            'public/birthday_photos/photo2.jpg',
+            'public/birthday_photos/photo3.jpg',
+            'public/birthday_photos/photo4.jpg',
+            'public/birthday_photos/photo5.jpg',
+            'public/birthday_photos/photo6.jpg',
+            'public/birthday_photos/photo7.jpg',
+            'public/birthday_photos/photo8.jpg',
+            'public/birthday_photos/photo9.jpg'
+        ];
+
+        photoPaths.forEach(src => {
+            const img = new Image();
+            img.src = src;
+            img.onerror = () => { img.src = src.replace('public/', 'assets/'); };
+            bgPhotoImgs.push(img);
+        });
+
+        mainPhotoImg = new Image();
+        mainPhotoImg.src = 'public/birthday_photos/main_photo.jpg';
+        mainPhotoImg.onerror = () => { mainPhotoImg.src = 'assets/birthday_photos/main_photo.jpg'; };
+
+        async function startDirectVideoExport() {
+            if (isExporting) return;
+            isExporting = true;
+
+            showToast('🎬 Generating 15s HD video...');
+
+            const recordBtn = document.getElementById('recordBtn');
+            const overlay = document.getElementById('recordOverlay');
+            recordBtn.classList.add('recording');
+            overlay.style.display = 'flex';
+
+            initAudioEngine();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (!audioDestNode) {
+                audioDestNode = audioCtx.createMediaStreamDestination();
+                if (lowpassFilter) {
+                    lowpassFilter.connect(audioDestNode);
+                }
+            }
+
+            if (!isMusicPlaying) {
+                isMusicPlaying = true;
+                playNextMelodyStep();
+            }
+
+            const canvasStream = exportCanvas.captureStream(30);
+            const combinedStream = new MediaStream();
+            canvasStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+            if (audioDestNode && audioDestNode.stream && audioDestNode.stream.getAudioTracks().length > 0) {
+                audioDestNode.stream.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+            } else if (bgAudio.captureStream) {
+                try {
+                    const aStream = bgAudio.captureStream();
+                    aStream.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+                } catch(e) {}
+            }
+
+            let mimeType = 'video/webm;codecs=vp9';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm';
+            }
+
+            const recorder = new MediaRecorder(combinedStream, { mimeType, videoBitsPerSecond: 6000000 });
+            const chunks = [];
+
+            recorder.ondataavailable = e => {
+                if (e.data && e.data.size > 0) chunks.push(e.data);
+            };
+
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Happy-Birthday-Memories.webm';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+
+                isExporting = false;
+                recordBtn.classList.remove('recording');
+                overlay.style.display = 'none';
+                document.getElementById('recordBtnText').textContent = 'Download Video';
+                showToast('🎉 Video successfully saved to your downloads!');
+            };
+
+            recorder.start();
+
+            let currentAngle = 0;
+            let exportTimeLeft = 15;
+            document.getElementById('recordTimer').textContent = exportTimeLeft + 's';
+
+            const countdownInt = setInterval(() => {
+                exportTimeLeft--;
+                document.getElementById('recordTimer').textContent = exportTimeLeft + 's';
+                if (exportTimeLeft <= 0) {
+                    clearInterval(countdownInt);
+                    recorder.stop();
+                }
+            }, 1000);
+
+            function drawExportFrame() {
+                if (!isExporting) return;
+
+                const W = exportCanvas.width;
+                const H = exportCanvas.height;
+
+                // 1. Cinematic Background
+                const bgGrad = exportCtx.createRadialGradient(W/2, H/2, 100, W/2, H/2, W * 0.85);
+                bgGrad.addColorStop(0, '#26123a');
+                bgGrad.addColorStop(0.5, '#120b1e');
+                bgGrad.addColorStop(1, '#050308');
+                exportCtx.fillStyle = bgGrad;
+                exportCtx.fillRect(0, 0, W, H);
+
+                // 2. Render 3D Rotating Background Photos (in Black and White)
+                currentAngle += 0.016;
+                const radiusX = 390;
+                const radiusZ = 390;
+                const focalLength = 800;
+
+                const panels = [];
+                for (let i = 0; i < 9; i++) {
+                    const theta = currentAngle + (i * (Math.PI * 2 / 9));
+                    const px = Math.sin(theta) * radiusX;
+                    const pz = Math.cos(theta) * radiusZ;
+                    panels.push({ idx: i, px, pz, theta });
+                }
+
+                panels.sort((a, b) => a.pz - b.pz);
+
+                panels.forEach(p => {
+                    const img = bgPhotoImgs[p.idx];
+                    if (!img || !img.complete) return;
+
+                    const scale = focalLength / (focalLength + p.pz);
+                    const screenX = W/2 + p.px * scale;
+                    const screenY = H/2 - 20;
+
+                    const panelW = 260 * scale;
+                    const panelH = 360 * scale;
+
+                    exportCtx.save();
+                    exportCtx.translate(screenX, screenY);
+                    exportCtx.filter = 'grayscale(100%) contrast(1.15) brightness(0.75)';
+                    exportCtx.shadowColor = 'rgba(0,0,0,0.85)';
+                    exportCtx.shadowBlur = 20 * scale;
+
+                    drawRoundedRect(exportCtx, -panelW/2, -panelH/2, panelW, panelH, 16 * scale);
+                    exportCtx.clip();
+                    exportCtx.drawImage(img, -panelW/2, -panelH/2, panelW, panelH);
+                    exportCtx.restore();
+                });
+
+                // 3. Foreground Main Photo (In Full Vibrant Color)
+                if (mainPhotoImg && mainPhotoImg.complete) {
+                    const mainW = 420;
+                    const mainH = 580;
+                    const mainX = (W - mainW) / 2;
+                    const mainY = (H - mainH) / 2 - 20;
+
+                    exportCtx.save();
+                    exportCtx.shadowColor = '#ffd700';
+                    exportCtx.shadowBlur = 40;
+                    exportCtx.fillStyle = '#ffe81f';
+                    drawRoundedRect(exportCtx, mainX - 7, mainY - 7, mainW + 14, mainH + 14, 25);
+                    exportCtx.fill();
+                    exportCtx.restore();
+
+                    exportCtx.save();
+                    exportCtx.filter = 'contrast(1.06) saturate(1.15)';
+                    drawRoundedRect(exportCtx, mainX, mainY, mainW, mainH, 20);
+                    exportCtx.clip();
+                    exportCtx.drawImage(mainPhotoImg, mainX, mainY, mainW, mainH);
+                    exportCtx.restore();
+                }
+
+                // 4. Harry Potter "Happy Birthday" Letters (EXACT SAME AS REFERENCE)
+                // Positioned on the left and right flanks at mid-height, 100% visible, NEVER hidden!
+                exportCtx.save();
+                exportCtx.font = '900 110px "Harry Potter Local", "Harry P", "Cinzel Decorative", serif';
+                exportCtx.fillStyle = '#FFE81F';
+                exportCtx.shadowColor = 'rgba(255, 232, 31, 0.95)';
+                exportCtx.shadowBlur = 30;
+
+                // Left "Happy"
+                exportCtx.save();
+                exportCtx.translate(W/2 - 230, H/2 - 10);
+                exportCtx.rotate(-0.08);
+                exportCtx.textAlign = 'right';
+                exportCtx.strokeText('Happy', 0, 0);
+                exportCtx.fillText('Happy', 0, 0);
+                exportCtx.restore();
+
+                // Right "Birthday" - FULLY VISIBLE, NOT HIDDEN!
+                exportCtx.save();
+                exportCtx.translate(W/2 + 230, H/2 + 15);
+                exportCtx.rotate(0.07);
+                exportCtx.textAlign = 'left';
+                exportCtx.strokeText('Birthday', 0, 0);
+                exportCtx.fillText('Birthday', 0, 0);
+                exportCtx.restore();
+                exportCtx.restore();
+
+                // 5. Floating Gold Sparkles
+                exportCtx.save();
+                particles.forEach(pt => {
+                    exportCtx.fillStyle = pt.color;
+                    exportCtx.globalAlpha = pt.alpha;
+                    exportCtx.beginPath();
+                    exportCtx.arc(pt.x * (W / window.innerWidth), pt.y * (H / window.innerHeight), pt.size * 2, 0, Math.PI * 2);
+                    exportCtx.fill();
+                });
+                exportCtx.restore();
+
+                requestAnimationFrame(drawExportFrame);
+            }
+
+            drawExportFrame();
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        // ==========================================
+        // 5. Utilities: Fullscreen & Toast
+        // ==========================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast('Fullscreen not allowed: ' + err.message);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        setTimeout(() => {
+            showToast('✨ Gentle Lullaby & 3D Memories Ready 🎂');
+        }, 1200);
+    </script>
+</body>
+</html>

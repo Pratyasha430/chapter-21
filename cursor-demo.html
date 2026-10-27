@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesthetic Fairy Dust & Coquette Cursor ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0d0711;
+            font-family: 'Outfit', sans-serif;
+            color: #fceade;
+            user-select: none;
+        }
+
+        /* Ambient Dreamy Wallpaper */
+        .ambient-aurora {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(ellipse 65% 50% at 50% 20%, rgba(98, 38, 115, 0.45) 0%, transparent 70%),
+                radial-gradient(ellipse 55% 45% at 20% 75%, rgba(225, 29, 72, 0.3) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 85% 65%, rgba(244, 63, 94, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 60% at 50% 95%, rgba(45, 15, 65, 0.55) 0%, transparent 75%),
+                #0d0711;
+            z-index: 0;
+        }
+
+        .film-grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 28px 28px;
+            opacity: 0.45;
+            z-index: 1;
+        }
+
+        /* Top Nav */
+        .top-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 14, 30, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 230, 215, 0.25);
+            border-radius: 40px;
+            padding: 8px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .top-btn {
+            background: transparent;
+            border: none;
+            color: #edd9f3;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .top-btn:hover {
+            background: rgba(243, 166, 178, 0.2);
+            color: #fff;
+        }
+
+        /* Center Aesthetic Card */
+        .aesthetic-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: rgba(24, 15, 32, 0.78);
+            border: 1px solid rgba(243, 166, 178, 0.35);
+            backdrop-filter: blur(22px);
+            border-radius: 30px;
+            padding: 42px 50px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(225, 29, 72, 0.22);
+            position: relative;
+        }
+
+        .aesthetic-card::before, .aesthetic-card::after {
+            content: "୨୧";
+            position: absolute;
+            top: -14px;
+            font-size: 20px;
+            color: #f3a6b2;
+            text-shadow: 0 2px 10px rgba(243, 166, 178, 0.5);
+        }
+        .aesthetic-card::before { left: 24px; }
+        .aesthetic-card::after { right: 24px; }
+
+        .aesthetic-eyebrow {
+            font-size: 12.5px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #f3a6b2;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .aesthetic-title {
+            font-family: 'Caveat', cursive;
+            font-size: 46px;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 22px rgba(243, 166, 178, 0.5);
+        }
+
+        .aesthetic-desc {
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: #eeddf2;
+            margin-bottom: 22px;
+        }
+
+        .style-pills {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .style-pill {
+            background: rgba(45, 25, 55, 0.85);
+            border: 1px solid rgba(243, 166, 178, 0.3);
+            color: #edd9f3;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .style-pill:hover {
+            border-color: #f3a6b2;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .style-pill.active {
+            background: linear-gradient(135deg, #f43f5e, #f3a6b2);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 18px rgba(225, 29, 72, 0.45);
+        }
+
+        .hint-text {
+            font-family: 'Caveat', cursive;
+            font-size: 22px;
+            color: #ffd700;
+            opacity: 0.95;
+            letter-spacing: 0.5px;
+        }
+
+        /* Canvas */
+        #aestheticCursorCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-aurora"></div>
+    <div class="film-grain"></div>
+
+    <nav class="top-nav">
+        <a href="celebration.html" class="top-btn">← Final Celebration Page</a>
+        <a href="index.html" class="top-btn">🎁 Surprises</a>
+    </nav>
+
+    <div class="aesthetic-card">
+        <span class="aesthetic-eyebrow">⋆ ｡˚ fairy stardust & coquette ｡˚ ⋆</span>
+        <h1 class="aesthetic-title">Dreamy Aesthetic Cursor ✨</h1>
+        <p class="aesthetic-desc">
+            A flowing, fairy-like stardust stream with delicate floating coquette bows (୨୧), fluttering cherry blossom petals, glowing outline hearts (♡), and twinkling celestial starlight diamonds (✦ ✧ ⋆).
+        </p>
+
+        <div class="style-pills">
+            <button type="button" class="style-pill active" onclick="setStyle('coquette')">🎀 Coquette & Fairy Dust</button>
+            <button type="button" class="style-pill" onclick="setStyle('celestial')">✨ Celestial Starlight (✦ ✧)</button>
+            <button type="button" class="style-pill" onclick="setStyle('petals')">🌸 Cherry Blossom Swirl</button>
+        </div>
+
+        <div class="hint-text" id="styleHint">
+            ✦ Glide your cursor across to watch the bows, petals & starlight dance! ✦
+        </div>
+    </div>
+
+    <canvas id="aestheticCursorCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('aestheticCursorCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        let currentStyle = 'coquette';
+
+        function setStyle(style) {
+            currentStyle = style;
+            document.querySelectorAll('.style-pill').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const hint = document.getElementById('styleHint');
+            if (style === 'celestial') {
+                hint.textContent = '✦ Pure sparkling celestial diamonds, golden stars & stardust! ✦';
+            } else if (style === 'petals') {
+                hint.textContent = '✦ Swirling pink cherry blossom petals & glowing morning dew! ✦';
+            } else {
+                hint.textContent = '✦ Dainty bows (୨୧), pink petals, outline hearts & fairy stardust! ✦';
+            }
+        }
+
+        // Mouse Physics
+        const mouse = {
+            targetX: width / 2,
+            targetY: height / 2,
+            x: width / 2,
+            y: height / 2,
+            vx: 0,
+            vy: 0,
+            speed: 0,
+            angle: 0,
+            hasMoved: false,
+            isHovering: false
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.targetX = e.clientX;
+            mouse.targetY = e.clientY;
+            mouse.hasMoved = true;
+            const interactive = e.target.closest('a, button, input, [role="button"], .style-pill, .top-btn, .aesthetic-card');
+            mouse.isHovering = !!interactive;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouse.targetX = e.touches[0].clientX;
+                mouse.targetY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // Silk Ribbon Trail
+        const TRAIL_MAX = 28;
+        const trail = [];
+
+        // Aesthetic Charms (Bows, Petals, Hearts, Stars)
+        const charms = [];
+        const ripples = [];
+
+        let distSinceLastSpawn = 0;
+        let idleTimer = 0;
+        let hoverScale = 1;
+        let lastMousePos = { x: width / 2, y: height / 2 };
+
+        function spawnAestheticCharm(x, y, vx, vy, count = 1, isClick = false) {
+            for (let i = 0; i < count; i++) {
+                if (charms.length > 75) charms.shift();
+
+                const angle = Math.random() * Math.PI * 2;
+                const spread = isClick ? (Math.random() * 28 + 6) : (Math.random() * 10 + 2);
+                const speed = isClick ? (Math.random() * 3.8 + 1.6) : (Math.random() * 1.3 + 0.4);
+
+                let type = 'star';
+                if (isClick && Math.random() < 0.3) {
+                    type = 'birthday21';
+                } else if (currentStyle === 'coquette') {
+                    const r = Math.random();
+                    if (r < 0.22) type = 'bow';
+                    else if (r < 0.42) type = 'blossom';
+                    else if (r < 0.60) type = 'pearl';
+                    else if (r < 0.76) type = 'heart';
+                    else if (r < 0.90) type = 'star';
+                    else type = 'dust';
+                } else if (currentStyle === 'celestial') {
+                    const r = Math.random();
+                    if (r < 0.4) type = 'star';
+                    else if (r < 0.7) type = 'diamond';
+                    else if (r < 0.85) type = 'pearl';
+                    else type = 'dust';
+                } else {
+                    const r = Math.random();
+                    if (r < 0.45) type = 'blossom';
+                    else if (r < 0.70) type = 'pearl';
+                    else if (r < 0.88) type = 'star';
+                    else type = 'dust';
+                }
+
+                charms.push({
+                    x: x + Math.cos(angle) * spread,
+                    y: y + Math.sin(angle) * spread,
+                    vx: (isClick ? Math.cos(angle) * speed : vx * 0.12) + (Math.random() - 0.5) * 1.2,
+                    vy: (isClick ? Math.sin(angle) * speed : vy * 0.12) - (Math.random() * 0.45 + 0.25),
+                    size: type === 'birthday21' ? 16 :
+                          type === 'blossom' ? (Math.random() * 5 + 11) :
+                          type === 'bow' ? (Math.random() * 4 + 13) : 
+                          type === 'heart' ? (Math.random() * 4 + 11) : 
+                          type === 'pearl' ? (Math.random() * 4 + 7) : 
+                          type === 'star' ? (Math.random() * 3 + 7) : 
+                          type === 'diamond' ? (Math.random() * 4 + 8) : (Math.random() * 3 + 3),
+                    scale: 0.15,
+                    scaleTarget: 1,
+                    alpha: 1,
+                    decay: isClick ? (Math.random() * 0.009 + 0.008) : (Math.random() * 0.010 + 0.008),
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.05,
+                    type: type,
+                    color: Math.random() > 0.4 ? '243, 166, 178' : (Math.random() > 0.5 ? '255, 218, 185' : '255, 235, 240')
+                });
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            ripples.push({
+                x: e.clientX,
+                y: e.clientY,
+                radius: 4,
+                maxRadius: 85,
+                alpha: 0.95
+            });
+            spawnAestheticCharm(e.clientX, e.clientY, 0, 0, 9, true);
+        });
+
+        let pulseTime = 0;
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Smooth Spring Physics towards mouse
+            const dx = mouse.targetX - mouse.x;
+            const dy = mouse.targetY - mouse.y;
+            mouse.vx = (mouse.vx + dx * 0.18) * 0.7;
+            mouse.vy = (mouse.vy + dy * 0.18) * 0.7;
+            mouse.x += mouse.vx;
+            mouse.y += mouse.vy;
+
+            mouse.speed = Math.sqrt(mouse.vx * mouse.vx + mouse.vy * mouse.vy);
+            if (mouse.speed > 0.3) {
+                mouse.angle = Math.atan2(mouse.vy, mouse.vx);
+            }
+
+            // Smooth hover transition
+            const targetHover = mouse.isHovering ? 1.45 : 1;
+            hoverScale += (targetHover - hoverScale) * 0.12;
+
+            pulseTime += 0.05;
+
+            // Trail history
+            trail.push({ x: mouse.x, y: mouse.y, age: 0 });
+            if (trail.length > TRAIL_MAX) trail.shift();
+
+            // Distance-based charm spawning for consistent aesthetic flow
+            const moveDist = Math.hypot(mouse.x - lastMousePos.x, mouse.y - lastMousePos.y);
+            distSinceLastSpawn += moveDist;
+            lastMousePos.x = mouse.x;
+            lastMousePos.y = mouse.y;
+
+            if (distSinceLastSpawn > 12) {
+                distSinceLastSpawn = 0;
+                spawnAestheticCharm(mouse.x, mouse.y, -mouse.vx, -mouse.vy, 1);
+                // Extra stardust speck when moving briskly
+                if (mouse.speed > 4 && Math.random() < 0.5) {
+                    spawnAestheticCharm(mouse.x, mouse.y, -mouse.vx * 0.5, -mouse.vy * 0.5, 1);
+                }
+            }
+
+            // Idle fairy breathing when stationary
+            if (mouse.speed < 0.3) {
+                idleTimer++;
+                if (idleTimer > 32) {
+                    idleTimer = 0;
+                    spawnAestheticCharm(mouse.x, mouse.y, (Math.random() - 0.5) * 0.6, -Math.random() * 0.8 - 0.3, 1);
+                }
+            } else {
+                idleTimer = 0;
+            }
+
+            // Expanding starlight ripples on swift movement
+            if (mouse.speed > 16 && Math.random() < 0.2) {
+                ripples.push({
+                    x: mouse.x,
+                    y: mouse.y,
+                    radius: 3,
+                    maxRadius: Math.random() * 22 + 26,
+                    alpha: 0.55
+                });
+            }
+
+            // 2. Render Ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const r = ripples[i];
+                r.radius += (r.maxRadius - r.radius) * 0.1 + 0.7;
+                r.alpha *= 0.92;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(243, 166, 178, ${r.alpha})`;
+                ctx.lineWidth = 1.3;
+                ctx.stroke();
+                ctx.restore();
+
+                if (r.alpha < 0.02 || r.radius >= r.maxRadius - 1) {
+                    ripples.splice(i, 1);
+                }
+            }
+
+            // 3. Render Ethereal Fluid Liquid Silk Stream with Harmonic Undulation
+            for (let i = trail.length - 1; i >= 0; i--) {
+                trail[i].age += 1;
+                if (trail[i].age > 24) {
+                    trail.splice(i, 1);
+                }
+            }
+
+            if (trail.length > 2) {
+                ctx.save();
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                for (let i = 1; i < trail.length; i++) {
+                    const prev = trail[i - 1];
+                    const curr = trail[i];
+                    const progress = i / trail.length;
+                    const fade = 1 - (curr.age / 24);
+                    const alpha = Math.max(0, progress * fade * 0.58);
+
+                    if (alpha <= 0.01) continue;
+
+                    // Organic liquid wave calculation (sine wave perpendicular to path)
+                    const segDx = curr.x - prev.x;
+                    const segDy = curr.y - prev.y;
+                    const segLen = Math.hypot(segDx, segDy) || 1;
+                    const perpX = -segDy / segLen;
+                    const perpY = segDx / segLen;
+                    const waveMag = Math.sin(pulseTime * 4.5 + i * 0.5) * (progress * 3.5);
+
+                    const pX = prev.x + perpX * waveMag;
+                    const pY = prev.y + perpY * waveMag;
+                    const cX = curr.x + perpX * waveMag;
+                    const cY = curr.y + perpY * waveMag;
+
+                    // Dreamy outer soft rose aura
+                    ctx.beginPath();
+                    ctx.moveTo(pX, pY);
+                    ctx.lineTo(cX, cY);
+                    ctx.lineWidth = progress * 17 + 2.5;
+                    ctx.strokeStyle = `rgba(244, 63, 94, ${alpha * 0.38})`;
+                    ctx.stroke();
+
+                    // Mid rose-gold fluid silk stream
+                    ctx.beginPath();
+                    ctx.moveTo(pX, pY);
+                    ctx.lineTo(cX, cY);
+                    ctx.lineWidth = progress * 8.5 + 1.5;
+                    ctx.strokeStyle = `rgba(243, 166, 178, ${alpha * 0.8})`;
+                    ctx.stroke();
+
+                    // Core champagne highlight
+                    ctx.beginPath();
+                    ctx.moveTo(pX, pY);
+                    ctx.lineTo(cX, cY);
+                    ctx.lineWidth = progress * 2.8 + 0.8;
+                    ctx.strokeStyle = `rgba(255, 245, 235, ${alpha * 0.96})`;
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+
+            // 4. Subtle Constellation Gossamer Threads between nearby starlight
+            if (charms.length > 3) {
+                ctx.save();
+                for (let a = 0; a < charms.length; a++) {
+                    for (let b = a + 1; b < charms.length; b++) {
+                        const ca = charms[a];
+                        const cb = charms[b];
+                        const d = Math.hypot(ca.x - cb.x, ca.y - cb.y);
+                        if (d < 56) {
+                            const lineAlpha = (1 - d / 56) * Math.min(ca.alpha, cb.alpha) * 0.28;
+                            ctx.strokeStyle = `rgba(255, 220, 230, ${lineAlpha})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.beginPath();
+                            ctx.moveTo(ca.x, ca.y);
+                            ctx.lineTo(cb.x, cb.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                ctx.restore();
+            }
+
+            // 5. Render Aesthetic Charms (Bows ୨୧, Blooming Sakura 🌸, Pearls 💧, Hearts ♡, '21', Starlight ✦)
+            for (let i = charms.length - 1; i >= 0; i--) {
+                const p = charms[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.96;
+                p.vy *= 0.96;
+                p.rotation += p.rotSpeed;
+                p.alpha -= p.decay;
+
+                if (p.scale < p.scaleTarget) {
+                    p.scale += (p.scaleTarget - p.scale) * 0.22 + 0.05;
+                    if (p.scale > 1) p.scale = 1;
+                }
+
+                if (p.alpha <= 0) {
+                    charms.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.scale(p.scale, p.scale);
+                ctx.globalAlpha = Math.max(0, p.alpha);
+
+                if (p.type === 'blossom') {
+                    // Hand-crafted blooming 5-petal sakura flower with stamen
+                    const r = p.size;
+                    for (let k = 0; k < 5; k++) {
+                        const petalAngle = (Math.PI * 2 / 5) * k;
+                        ctx.save();
+                        ctx.rotate(petalAngle);
+                        const grad = ctx.createLinearGradient(0, 0, 0, -r);
+                        grad.addColorStop(0, 'rgba(255, 245, 248, 0.95)');
+                        grad.addColorStop(0.6, 'rgba(244, 114, 182, 0.85)');
+                        grad.addColorStop(1, 'rgba(225, 29, 72, 0.75)');
+                        ctx.fillStyle = grad;
+                        ctx.beginPath();
+                        ctx.ellipse(0, -r * 0.5, r * 0.35, r * 0.55, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                    // Golden glowing flower stamen
+                    ctx.fillStyle = 'rgba(255, 225, 120, 0.95)';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (p.type === 'pearl') {
+                    // Iridescent liquid glass bubble with glossy highlight
+                    const r = p.size;
+                    const grad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, 1, 0, 0, r);
+                    grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+                    grad.addColorStop(0.4, 'rgba(255, 200, 220, 0.65)');
+                    grad.addColorStop(0.85, 'rgba(244, 63, 94, 0.35)');
+                    grad.addColorStop(1, 'rgba(255, 182, 193, 0.7)');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Cute glass specular glint
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(-r * 0.32, -r * 0.32, r * 0.24, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (p.type === 'bow') {
+                    // Dainty Coquette Ribbon Bow (୨୧)
+                    ctx.font = `600 ${p.size}px "Outfit", sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha * 0.95})`;
+                    ctx.shadowColor = 'rgba(243, 166, 178, 0.75)';
+                    ctx.shadowBlur = 8;
+                    ctx.fillText('୨୧', 0, 0);
+                } else if (p.type === 'birthday21') {
+                    // Unique 21 Birthday Token
+                    ctx.font = `700 15px 'Playfair Display', serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#ffd700';
+                    ctx.shadowColor = 'rgba(255, 215, 0, 0.85)';
+                    ctx.shadowBlur = 10;
+                    ctx.fillText('21 ♡', 0, 0);
+                } else if (p.type === 'heart') {
+                    // Delicate Outline Heart (♡)
+                    ctx.font = `700 ${p.size}px "Outfit", sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha * 0.92})`;
+                    ctx.shadowColor = 'rgba(244, 63, 94, 0.65)';
+                    ctx.shadowBlur = 7;
+                    ctx.fillText('♡', 0, 0);
+                } else if (p.type === 'dust') {
+                    // Micro Shimmering Fairy Dust (⋆)
+                    ctx.font = `600 ${p.size}px "Outfit", sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = `rgba(255, 235, 180, ${p.alpha * 0.9})`;
+                    ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
+                    ctx.shadowBlur = 6;
+                    ctx.fillText('⋆', 0, 0);
+                } else {
+                    // Celestial Starlight Diamond (✦)
+                    const r = p.size * 1.3;
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -r);
+                    ctx.quadraticCurveTo(0, 0, r, 0);
+                    ctx.quadraticCurveTo(0, 0, 0, r);
+                    ctx.quadraticCurveTo(0, 0, -r, 0);
+                    ctx.quadraticCurveTo(0, 0, 0, -r);
+                    ctx.fill();
+
+                    // Central glowing starlight pin
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            // 6. Enchanted Multi-Satellite Fairy Orbit (3 Companions: Star ✧, Gold Spark ⋆, and Sakura Dewdrop)
+            const orbitR1 = 15 + Math.sin(pulseTime * 2.5) * 2;
+            const orbitAngle1 = pulseTime * 2.2;
+            const sat1X = mouse.x + Math.cos(orbitAngle1) * orbitR1;
+            const sat1Y = mouse.y + Math.sin(orbitAngle1) * (orbitR1 * 0.65);
+
+            const orbitR2 = 19 + Math.cos(pulseTime * 2) * 2;
+            const orbitAngle2 = -pulseTime * 1.8 + Math.PI;
+            const sat2X = mouse.x + Math.cos(orbitAngle2) * orbitR2;
+            const sat2Y = mouse.y + Math.sin(orbitAngle2) * (orbitR2 * 0.65);
+
+            const orbitR3 = 24 + Math.sin(pulseTime * 1.6) * 3;
+            const orbitAngle3 = pulseTime * 1.4 + Math.PI * 0.5;
+            const sat3X = mouse.x + Math.cos(orbitAngle3) * orbitR3;
+            const sat3Y = mouse.y + Math.sin(orbitAngle3) * (orbitR3 * 0.65);
+
+            // Satellite 1: Tiny pink celestial diamond
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 192, 203, 0.92)';
+            ctx.shadowColor = 'rgba(243, 166, 178, 0.9)';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            const s1 = 3.6;
+            ctx.moveTo(sat1X, sat1Y - s1);
+            ctx.quadraticCurveTo(sat1X, sat1Y, sat1X + s1, sat1Y);
+            ctx.quadraticCurveTo(sat1X, sat1Y, sat1X, sat1Y + s1);
+            ctx.quadraticCurveTo(sat1X, sat1Y, sat1X - s1, sat1Y);
+            ctx.quadraticCurveTo(sat1X, sat1Y, sat1X, sat1Y - s1);
+            ctx.fill();
+            ctx.restore();
+
+            // Satellite 2: Tiny golden stardust spark
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 235, 170, 0.95)';
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.85)';
+            ctx.shadowBlur = 7;
+            ctx.beginPath();
+            ctx.arc(sat2X, sat2Y, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Satellite 3: Iridescent mini dew glint
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.shadowColor = 'rgba(255, 182, 193, 0.8)';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(sat3X, sat3Y, 1.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // 7. Lead Fairy Starlight Wand & Rotating Celestial Rays
+            ctx.save();
+            ctx.translate(mouse.x, mouse.y);
+
+            // Rotating delicate celestial ray spokes
+            ctx.save();
+            ctx.rotate(pulseTime * 0.7);
+            ctx.strokeStyle = 'rgba(255, 240, 245, 0.45)';
+            ctx.lineWidth = 1;
+            for (let k = 0; k < 4; k++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.beginPath();
+                ctx.moveTo(0, 4);
+                ctx.lineTo(0, 14);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.rotate(mouse.angle);
+
+            const stretchX = 1 + Math.min(mouse.speed * 0.05, 0.6) + Math.sin(pulseTime) * 0.06;
+            const stretchY = 1 - Math.min(mouse.speed * 0.03, 0.28) - Math.sin(pulseTime) * 0.06;
+            ctx.scale(stretchX, stretchY);
+
+            // Ambient Fairy Glow
+            const auraGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 24);
+            auraGrad.addColorStop(0, 'rgba(255, 182, 193, 0.72)');
+            auraGrad.addColorStop(0.45, 'rgba(243, 166, 178, 0.3)');
+            auraGrad.addColorStop(1, 'rgba(225, 29, 72, 0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 24, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Core Starlight Diamond Cursor
+            const starRadius = 8.5;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.98)';
+            ctx.shadowColor = 'rgba(243, 166, 178, 0.9)';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(0, -starRadius);
+            ctx.quadraticCurveTo(0, 0, starRadius, 0);
+            ctx.quadraticCurveTo(0, 0, 0, starRadius);
+            ctx.quadraticCurveTo(0, 0, -starRadius, 0);
+            ctx.quadraticCurveTo(0, 0, 0, -starRadius);
+            ctx.fill();
+
+            ctx.restore();
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
